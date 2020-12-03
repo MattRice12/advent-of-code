@@ -7,15 +7,16 @@ def check_slope(x, y)
   $data.each_with_index do |line, i|
     slope = x / y.to_f
     
-    start = (i * slope).to_i
+    point = (slope * i)
     
-    next if (slope * i) != start # skip if slope doesn't hit a vertex on the grid
+    next if point != point.to_i # skip if x isn't a whole number (happens when y > 1)
+    point = point.to_i
 
-    if start / line.length > 0
-      iteration = start / line.length
+    if point / line.length > 0
+      iteration = point / line.length
     end
 
-    position = start - (iteration * line.length)
+    position = point - (iteration * line.length)
 
     tree_count += 1 if line[position] == "#"
   end
