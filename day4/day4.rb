@@ -29,12 +29,13 @@ def all_fields_valid?(fields_hash)
 end
 
 def passport_valid?(fields, codes, optional_code)
-  fields_hash = fields.flat_map { |field| Hash[*field.split(":")] }.inject(:merge)
-  all_codes_present?(fields_hash.keys, codes, optional_code) && all_fields_valid?(fields_hash)
+  all_codes_present?(fields.keys, codes, optional_code) && all_fields_valid?(fields)
 end
 
 passports.each do |passport|
   fields = passport.split(/\s/)
+                   .flat_map { |field| Hash[*field.split(":")] }
+                   .inject(:merge)
   valid_count += 1 if passport_valid?(fields, codes, optional_code)
 end
 
