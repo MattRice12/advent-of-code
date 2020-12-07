@@ -29,7 +29,7 @@ def find_shiny_gold(rule_set, rule)
 end
 
 def count_nested_bags(rule_set, top_level_bag)
-  count = top_level_bag.map do |bag|
+  top_level_bag.map do |bag|
     if bag[:count].to_i == 0 # if bag contains no other bags return 0
       0
     else
@@ -40,8 +40,7 @@ def count_nested_bags(rule_set, top_level_bag)
         bag[:count].to_i) +
       bag[:count].to_i
     end
-  end
-  count.inject(:+)
+  end.inject(:+)
 end
 
 rule_set.each do |key, value|
