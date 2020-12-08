@@ -18,13 +18,15 @@ rule_set = rules.map do |rule|
   [key, value]
 end.to_h
 
-def find_shiny_gold(rule_set, rule)
-  return true if rule.any? { |bag| bag[:contains] == MY_BAG }
+puts rule_set.count
 
-  rule.any? do |bag|
-    next if !rule_set[bag[:contains]]
-    value = rule_set[bag[:contains]]
-    find_shiny_gold(rule_set, value)
+def find_shiny_gold(rule_set, value)
+  return true if value.any? { |bag| bag[:contains] == MY_BAG }
+
+  value.any? do |bag|
+    next_value = rule_set[bag[:contains]]
+    next if next_value.nil?
+    find_shiny_gold(rule_set, next_value)
   end
 end
 
