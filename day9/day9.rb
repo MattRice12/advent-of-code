@@ -47,18 +47,16 @@ class VM
   def find_contiguous_set
     self.running = true
     rules[0..-2].each_with_index do |rule, i|
-      next if terminated? || value_exceeds_target?(rule)
-      run_inner_loop = true
+      break if terminated? || value_exceeds_target?(rule)
       set = [rule]
       rules[(i + 1)..-1].each do |rule2|
-        next if terminated? || value_exceeds_target?(rule2) || !run_inner_loop
+        next if terminated? || value_exceeds_target?(rule2) 
         set << rule2
-        sum = set.inject(0, :+)
+        sum = set.sum
+        break if value_exceeds_target?(sum)
         if sum == target_value
           self.running = false
-          self.encryption_weakness = [set.min, set.max].inject(0, :+)
-        elsif sum > target_value
-          run_inner_loop = false
+          self.encryption_weakness = [set.min, set.max].sum
         end
       end
     end
