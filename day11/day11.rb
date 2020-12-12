@@ -26,10 +26,6 @@ class Seat
     @value == FLOOR
   end
 
-  def where_adjacent(x, y)
-    self.y.between?(y-1, y+1) && self.x.between?(x-1, x+1)
-  end
-
   def to_s
     value
   end
@@ -63,23 +59,12 @@ class Life
   end
 
   def find_adjacent(x, y)
-    top_left = seats["x#{x-1}_y#{y-1}"]
-    top_mid = seats["x#{x}_y#{y-1}"]
-    top_right = seats["x#{x+1}_y#{y-1}"]
-
-    mid_left = seats["x#{x-1}_y#{y}"]
-    mid_mid = seats["x#{x}_y#{y}"]
-    mid_right = seats["x#{x+1}_y#{y}"]
-
-    bottom_left = seats["x#{x-1}_y#{y+1}"]
-    bottom_mid = seats["x#{x}_y#{y+1}"]
-    bottom_right = seats["x#{x+1}_y#{y+1}"]
-
-    [
-      top_left,    top_mid,    top_right,
-      mid_left,                mid_right,
-      bottom_left, bottom_mid, bottom_right
-    ]
+    (x-1..x+1).map do |x1|
+      (y-1..y+1).map do |y1|
+        next if x1 == x && y1 == y
+        seats["x#{x1}_y#{y1}"] 
+      end
+    end.flatten.compact
   end
 
   def all_adjacent_seats_empty?(seat)
@@ -131,9 +116,9 @@ until life.seat_count == previous_count do
   previous_count = life.seat_count
   life.tick
   life.count_seats
-  # puts life
-  # puts previous_count
-  # puts life.seat_count
+  puts life
+  puts previous_count
+  puts life.seat_count
 end
 
 puts life
