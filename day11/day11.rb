@@ -1,4 +1,5 @@
 data = File.open("./data.txt").readlines
+# data = File.open("./data-2.txt").readlines
 
 class Seat
   attr_accessor :x, :y, :value
@@ -25,14 +26,6 @@ class Seat
     @value == FLOOR
   end
 
-  def occupy!
-    @value = OCCUPIED
-  end
-
-  def empty!
-    @value = UNOCCUPIED
-  end
-
   def where_adjacent(x, y)
     self.y.between?(y-1, y+1) && self.x.between?(x-1, x+1)
   end
@@ -50,7 +43,7 @@ class Life
   def initialize(data)
     @seats = build(data)
     @round = 0
-    @seat_count = { "." => 0, "L" => 0, "#" => 0}
+    @seat_count = 0
   end
 
   def build(data)
@@ -64,23 +57,37 @@ class Life
 
     section.map.with_index do |y, i|
       [Seat::FLOOR, y.strip.split(""), Seat::FLOOR].flatten.map.with_index do |x, j|
-        { "x#{i}_y#{j}" => Seat.new(j, i, x) }
+        { "x#{j}_y#{i}" => Seat.new(j, i, x) }
       end
     end.flatten.inject({}, :merge)
   end
 
+  def find_adjacent(x, y)
+    top_left = seats["x#{x-1}_y#{y-1}"]
+    top_mid = seats["x#{x}_y#{y-1}"]
+    top_right = seats["x#{x+1}_y#{y-1}"]
+
+    mid_left = seats["x#{x-1}_y#{y}"]
+    mid_mid = seats["x#{x}_y#{y}"]
+    mid_right = seats["x#{x+1}_y#{y}"]
+
+    bottom_left = seats["x#{x-1}_y#{y+1}"]
+    bottom_mid = seats["x#{x}_y#{y+1}"]
+    bottom_right = seats["x#{x+1}_y#{y+1}"]
+
+    [
+      top_left,    top_mid,    top_right,
+      mid_left,                mid_right,
+      bottom_left, bottom_mid, bottom_right
+    ]
+  end
+
   def all_adjacent_seats_empty?(seat)
-    seats
-      .select { |k, v| v.where_adjacent(seat.x, seat.y) }
-      .select { |k, v| v.floor? || v.unoccupied? }
-      .length == 9
+    find_adjacent(seat.x, seat.y).count { |s| !s.occupied? } == 8
   end
 
   def four_adjacent_seats_occupied?(seat)
-    seats
-      .select { |k, v| v.where_adjacent(seat.x, seat.y) }
-      .select { |k, v| v.occupied? }
-      .length > 4
+    find_adjacent(seat.x, seat.y).count { |s| s.occupied? } >= 4
   end
 
   def find_next_seat(previous_seat)
@@ -92,9 +99,8 @@ class Life
 
   def tick
     self.round += 1
-    previous_seats = seats.dup
     next_seats = Hash.new()
-    previous_seats.each do |k, previous_seat|
+    seats.each do |k, previous_seat|
       next_seats[k] = Seat.new(
         previous_seat.x,
         previous_seat.y,
@@ -105,9 +111,7 @@ class Life
   end
 
   def count_seats
-    self.seat_count = seats.each_with_object({ "." => 0, "L" => 0, "#" => 0}) do |(k, seat), acc|
-      acc[seat.value] += 1
-    end
+    self.seat_count = seats.values.count {|v| v.value == "#"}
   end
 
   def to_s
@@ -121,17 +125,16 @@ life = Life.new(data)
 
 previous_count = 0
 
-# life.tick
+life.tick
 life.count_seats
-# until life.seat_count["#"] == previous_count do
-#   previous_count = life.seat_count["#"]
-#   life.tick
-#   life.count_seats
-#   puts life
-#   puts previous_count
-#   puts life.seat_count
-# end
+until life.seat_count == previous_count do
+  previous_count = life.seat_count
+  life.tick
+  life.count_seats
+  # puts life
+  # puts previous_count
+  # puts life.seat_count
+end
 
 puts life
 puts life.seat_count
-
