@@ -51,23 +51,21 @@ class ParseTickets
     end
   end
 
-  def find_field_values
-    invalid_positions = {}
-    @rules.each do |name, ranges|
-      invalid_positions[name] = []
-      n = 0
-      until n >= @valid_tickets[0].length do
+  def find_invalid_positions_per_field
+    @rules.each_with_object({}) do |(name, ranges), acc|
+      @valid_tickets[0].length.times do |n|
         if !@valid_tickets.all? { |vt| ticket_value_between_rules?(vt[n], ranges) }
-          invalid_positions[name] << n
+          acc[name] ||= []
+          acc[name] << n
         end
-        n += 1
       end
     end
-    invalid_positions
+  end
 
+  def find_field_values
     all_positions = (0..@valid_tickets[0].length - 1).to_a
     remaining_positions = all_positions
-    invalid_positions
+    find_invalid_positions_per_field
       .sort_by { |k, v| -v.length }
       .map { |item| 
         position = { item[0] => remaining_positions - item[1] }
@@ -85,5 +83,5 @@ class ParseTickets
   end
 end
 
-# p ParseTickets.new(data).invalid_tickets.values.sum
+p ParseTickets.new(data).invalid_tickets.values.sum
 p ParseTickets.new(data).find_my_ticket_value
