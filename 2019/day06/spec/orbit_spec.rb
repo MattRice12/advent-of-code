@@ -27,10 +27,10 @@ RSpec.describe Orbit do
   end
 
   describe "count orbits" do
-    it "count total orbits for single moon" do
+    it "list total orbits for single moon" do
       orbit = Orbit.new(["COM)B", "B)C", "C)D"])
 
-      expect(orbit.count_orbits("D")).to eq(3)
+      expect(orbit.track_path("D")).to eq(["C", "B", "COM"])
     end
 
     it "count total orbits for all moons" do

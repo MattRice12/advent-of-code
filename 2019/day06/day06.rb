@@ -21,15 +21,10 @@ class Orbit
     end
   end
 
-  def count_orbits(moon, total = 0)
-    return total if !@orbits[moon]
-    count_orbits(@orbits[moon], total + 1)
-  end
-
   def count_all_orbits
     @orbits
-      .map {|k, v| count_orbits(k)}
-      .sum
+      .flat_map {|k, v| track_path(k)}
+      .length
   end
 
   def track_path(moon, path = [])
