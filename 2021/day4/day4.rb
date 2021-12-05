@@ -1,6 +1,7 @@
 class Bingo
   def initialize
-    @data = File.open('./data.txt').readlines.map(&:chomp)
+    # @data = File.open('./data.txt').readlines.map(&:chomp)
+    @data = File.open('./data_2.txt').readlines.map(&:chomp)
     # @data = File.open('./sample_data.txt').readlines.map(&:chomp)
     @drawn_numbers = @data[0].split(',').map(&:to_i)
     @boards = build_boards
