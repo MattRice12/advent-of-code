@@ -2,12 +2,14 @@ class Day6
   DAYS_LEFT = 80
 
   def initialize
-    @data = File.open('./data.txt').readlines.map(&:chomp).first.split(',').map(&:to_i)
-    # @data = File.open('./sample_data.txt').readlines.map(&:chomp).first.split(',').map(&:to_i)
+    # @data = File.open('./data.txt').readlines.map(&:chomp).first.split(',').map(&:to_i)
+    @data = File.open('./sample_data.txt').readlines.map(&:chomp).first.split(',').map(&:to_i)
+    @fish = @data.group_by(&:itself).map{ |k, v| [k, v.size] }.to_h
   end
 
   def call
-    79.times do |n|
+    p @fish
+    17.times do |n|
       0.upto(@data.length-1) do |i|
         next if @data[i] == 0
         @data[i] -= 1
