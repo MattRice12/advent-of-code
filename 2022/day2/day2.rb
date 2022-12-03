@@ -44,5 +44,16 @@ class PRS
   end
 end
 
-puts PRS.new.round_1
-puts PRS.new.round_2
+def time_it
+  st = Time.now
+  yield
+  puts Time.now - st
+end
+
+time_it do
+  puts PRS.new.round_1
+end
+
+time_it do
+  puts PRS.new.round_2
+end
