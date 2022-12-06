@@ -11,29 +11,17 @@ class Tuning
   end
 
   def round_1
-    sequence = []
-    distance = 0
-    data.each do |char|
-      next if sequence.uniq.length == PACKET_MARKER
-
-      sequence.shift if sequence.length >= PACKET_MARKER
-      sequence << char
-      distance += 1
-    end
-    distance
+    marker_tuning(PACKET_MARKER)
   end
 
   def round_2
-    sequence = []
-    distance = 0
-    data.each do |char|
-      next if sequence.uniq.length == MESSAGE_MARKER
+    marker_tuning(MESSAGE_MARKER)
+  end
 
-      sequence.shift if sequence.length >= MESSAGE_MARKER
-      sequence << char
-      distance += 1
+  def marker_tuning(marker)
+    3.upto data.length do |n|
+      return n+1 if data[n-(marker-1)..n].uniq.length == marker
     end
-    distance
   end
 end
 
