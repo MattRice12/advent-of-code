@@ -19,9 +19,7 @@ class Tuning
   end
 
   def marker_tuning(marker)
-    3.upto data.length do |n|
-      return n+1 if data[n-(marker-1)..n].uniq.length == marker
-    end
+    data.each_cons(marker).with_index {|a, i| return i+marker if a.uniq.length == marker}
   end
 end
 
